@@ -37,6 +37,17 @@ start)
 		/usr/bin/python3 $KROOT/klippy/extras/ad5x_plugins.py ifs-mcu \
 			$PD/config/plugins.cfg
 	fi
+	# Happy Hare's Klipper modules come with the image's Klipper (package
+	# happy-hare): a newer daily package lacks them, so while a plugin
+	# drives the IFS (IFS on Klipper, Kiln's pins not linked) the image's
+	# Klipper starts instead
+	if [ "$KROOT" != /usr/lib/klipper ] && [ -f /run/ad5x/ifs-klipper ] &&
+			[ ! -e /run/ad5x/ifs-mcu/generic-flashforge-ifs.cfg ] &&
+			[ -e /usr/lib/klipper/klippy/extras/mmu_machine.py ] &&
+			[ ! -e $KROOT/klippy/extras/mmu_machine.py ]; then
+		echo "klipper: $KROOT lacks Happy Hare's modules, using /usr/lib/klipper"
+		KROOT=/usr/lib/klipper
+	fi
 	# Old dated klippy logs: at most 5 and 50 MB (lib/logs.sh)
 	klippy_log_retention $PD/logs
 	# Mainline 7.3: the kernel worker that hands the MCUs' serial bytes to
