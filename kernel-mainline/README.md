@@ -72,6 +72,17 @@ through Klipper, Happy Hare and the IFS, every layer, no kernel warnings.
 - **DMA:** the PDMA runs on the X1830 driver (`dma-jz4780`); dmatest passed
   50 transfers on each of 4 channels at once, no failures. The UART nodes
   list their DMA channels (`8250_ingenic` does not use DMA yet).
+  Two `dma-jz4780` fixes (0075, 0076; mainline 7.4-rc3 has both bugs):
+  - The prep functions kept the transfer-size shift in the channel and
+    read it back for the transfer count, so two threads preparing on one
+    channel could program a count up to 128 times too large. dmatest with
+    128-byte buffers, 8 channels x 2 threads: 19 errors in 1.6M copies and
+    then a silent hang (screen corrupted) without the fix; 0 in 3.2M with
+    it, with 0075 alone too. One thread per channel (16 x 1) never failed.
+  - The residue was scaled by the shift of the channel's last prepared
+    transfer: a 3-byte memcpy prepared while a 1 MiB one ran made the
+    running one's residue drop from about 1 MiB to 8 KiB.
+  Nothing on the AD5X but dmatest uses the PDMA today.
 - **eMMC** (`tools/emmc-test.c`, every eMMC block device set read-only
   first): HS200, 8 bits, 1.8 V signalling, now at 150 MHz (stock: 25,
   Kiln's 6.6: 50), the fastest the MSC clock reaches within HS200's 200
@@ -243,9 +254,10 @@ Open points:
   MHz, the range of Ingenic's PLL table; the boot loader's settings are
   inside it), which pins have pull resistors (all allowed), and the X2600
   cores using the X2000 CPU compatible (the same PRId).
-- **Sign-off.** Three patches are signed off and ready for submission:
-  TLBINV on the whole MMU, icache tagging from Config.VI and the L2
-  workaround. The rest carry no `Signed-off-by` yet; only you can certify
+- **Sign-off.** Five patches are signed off and ready for submission:
+  TLBINV on the whole MMU, icache tagging from Config.VI, the L2
+  workaround and the two `dma-jz4780` fixes. The rest carry no
+  `Signed-off-by` yet; only you can certify
   them (`git rebase --signoff v7.3.3` in the development tree).
 
 ## Build
