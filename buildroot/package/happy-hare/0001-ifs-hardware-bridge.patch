@@ -80,7 +80,7 @@ index 594cf39..204cff8 100644
  
      def _ensure_safe_extruder_temperature(self, source="auto", wait=False):
 diff --git a/extras/mmu/mmu_filament_movement.py b/extras/mmu/mmu_filament_movement.py
-index 244285b..8486d4b 100644
+index 244285b..88d9dd7 100644
 --- a/extras/mmu/mmu_filament_movement.py
 +++ b/extras/mmu/mmu_filament_movement.py
 @@ -430,6 +430,22 @@ class MmuFilamentMovement:
@@ -293,7 +293,27 @@ index 244285b..8486d4b 100644
                      else:
                          # No Bowden stage exists. If unloading the extruder just
                          # reverse-homed off the same sensor used as the gate datum,
-@@ -2928,7 +2981,9 @@ class MmuFilamentMovement:
+@@ -2844,8 +2897,17 @@ class MmuFilamentMovement:
+                         u.calibrator.note_unload_telemetry(self.gate_selected, bowden_move, bowden_travel, bowden_move_ratio)
+ 
+                 elif start_filament_pos >= FILAMENT_POS_HOMED_GATE:
+-                    # We have to do slow unload because we don't know exactly where we are
+-                    self._unload_gate(bowden_move)
++                    if u.p.park_at_toolhead and self.gate_parked_at_toolhead[self.gate_selected]:
++                        # Parked above the toolhead (AD5X IFS) and only the position was
++                        # lost (e.g. a recovery with the toolhead sensor clear): it is
++                        # still parked there. A slow unload over the whole bowden would
++                        # pull it ~bowden_length past its park position.
++                        self.set_filament_pos_state(FILAMENT_POS_UNLOADED)
++                        self.log_info(f"Filament parked in Bowden tube {self.gate_selected} above toolhead")
++                    else:
++                        # We have to do slow unload because we don't know exactly where we are
++                        self._unload_gate(bowden_move)
++                        self.set_gate_parked_at_toolhead(self.gate_selected, False)
+ 
+             # Set future "from buffer" flag (also used for faster loading speed)
+             if unload_to_buffer and self.gate_status[self.gate_selected] != GATE_EMPTY:
+@@ -2928,7 +2990,9 @@ class MmuFilamentMovement:
  
          # Pre check to validate the presence of filament in the extruder and case where we don't need to form tip
          filament_initially_present = self.sensor_manager.check_sensor(SENSOR_TOOLHEAD)
