@@ -82,8 +82,16 @@ class AD5XWeight:
         if self.rx_event is not None:
             ev, self.rx_event = self.rx_event, None
             ev.complete(True)
-    def _complete(self):
-        return len(self.rx_buf) > 12 and b"ok" in self.rx_buf
+    def _complete(self, quiet=False):
+        # Stock's rule (longer than 12 bytes, contains "ok") is met part way
+        # through a reply: at 9600 baud the ~30-byte "command H7 ok. <raw>
+        # <grams> g" takes ~30 ms, and a read that lands in the middle got
+        # "command H7 ok. 8", with no grams field. The reply ends with a
+        # newline: complete there. Without one (a board that sends none),
+        # stock's rule once nothing more arrives (quiet).
+        if len(self.rx_buf) <= 12 or b"ok" not in self.rx_buf:
+            return False
+        return quiet or self.rx_buf.endswith(b"\n")
     def _request(self, cmd):
         """Send cmd and return the reply (caller holds the mutex)."""
         if self.fd is None:
@@ -114,7 +122,7 @@ class AD5XWeight:
                     self.rx_event = None
                 if len(self.rx_buf) == n:
                     break
-            if self._complete():
+            if self._complete(quiet=True):
                 reply = self.rx_buf.decode("ascii", "replace").strip()
                 logging.debug("ad5x_weight: <- %s", reply)
                 return reply
