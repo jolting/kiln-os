@@ -8,9 +8,11 @@ Replaces the stock `[ifs]` driver with Happy Hare v4, providing:
   of fully retracting 580 mm Bowden tubes on toolchanges.
 - **Active Synchronized Extrusion**: slaves the IFS feeder stepper to Klipper's
   extruder stepper (`sync_to_extruder: 1`), feeding in lockstep during printing.
-- **FlowGuard Protection**: continuous clog and tangle detection using the IFS
-  analog spring buffers (`ifs:PC1`, `ifs:PC3`, `ifs:PB13`, `ifs:PB15`), including
-  automatic current boosting to pull through spool resistance.
+- **Stall Sensors**: the IFS's per-slot stall sensors (`ifs:PC1`, `ifs:PC3`,
+  `ifs:PB13`, `ifs:PB15`) read a magnet wheel the filament turns, so they show
+  filament motion, not a buffer position. They are graphed as
+  `ifs_spool1_stall` ... `ifs_spool4_stall`; Happy Hare does not use them yet
+  (no sync feedback and no buffer-based FlowGuard).
 - **AD5X Purge Box Integration**: full trash box purge with part fan cooling
   dwell to solidify purge pellets, box edge scraping (`_PURGE_WIPE`), and silicone
   brush cleaning (`_NOZZLE_BRUSH`).
