@@ -20,7 +20,9 @@ UDEVD_ARGS=""
 # too (a file there with the name of a rule in /lib/udev/rules.d replaces
 # it). Rules can run programs as root, so the folders and each file must be
 # root's and writable by root only; anything else is skipped and logged.
-# Plugins (owned by klipper) can't add rules this way.
+# Plugins (owned by klipper) can't add rules this way. The recovery OS
+# (/etc/ad5x-recovery) never uses them: a rule that breaks the main OS
+# must not break what it gets repaired from.
 USER_RULES=/data/ad5x/udev/rules.d
 
 root_only() {	# owned by uid 0, not writable by group or others
@@ -32,6 +34,10 @@ root_only() {	# owned by uid 0, not writable by group or others
 
 user_rules() {
 	[ -d "$USER_RULES" ] || return 0
+	if [ -e /etc/ad5x-recovery ]; then
+		echo "udevd: $USER_RULES not used in the recovery OS"
+		return 0
+	fi
 	if ! root_only /data/ad5x || ! root_only "${USER_RULES%/*}" ||
 		! root_only "$USER_RULES"; then
 		echo "udevd: $USER_RULES skipped: not root's alone"

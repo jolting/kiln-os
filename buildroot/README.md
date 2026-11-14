@@ -81,7 +81,7 @@ From the stock kernel image and root filesystem (3.1.0 updater):
   copies the owner's rules from `/data/ad5x/udev/rules.d` to
   `/run/udev/rules.d` before udevd starts, only when the folders and the
   file are root's and writable by root only (rules run programs as root;
-  plugins, owned by klipper, can't add any).
+  plugins, owned by klipper, can't add any); the recovery OS never uses them.
 - Python 3 with Klipper's dependencies; mainline Klipper at the same commit
   as the MCU images, `c_helper.so` cross-compiled, this project's extras and
   default `printer.cfg` / `ifs.cfg`.
