@@ -10,6 +10,7 @@ the issue: it is closed by hand after the release.
 
 ## Unreleased
 
+- **Video decoder off**: the kernel no longer sets up the chip's H.264 decoder, which nothing on the printer uses (the camera sends MJPEG). Its driver crashed whenever a program opened it, because the board gives it no memory of its own.
 - **Part Fan tile**: on the print screen, the Part Fan tile could read 100% at the start of a print while the part fan was off (it showed the board fan until the part fan had run once). It now shows the part fan from the start.
 - **No part fan during the bed heat soak**: the part fan now switches off after the nozzle brushing at the start of a print, so it no longer blows on the bed while the bed heat soak waits.
 - **No second splash**: the touch screen no longer shows HelixScreen's own logo after the Kiln logo; the Kiln logo stays until the home screen (or the setup wizard) appears, about 2 seconds sooner.
