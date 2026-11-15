@@ -25,6 +25,9 @@ BR2_TARGET_GENERIC_HOSTNAME="ad5x"
 BR2_TARGET_GENERIC_ISSUE="Kiln OS"
 BR2_INIT_BUSYBOX=y
 BR2_PACKAGE_BUSYBOX_CONFIG_FRAGMENT_FILES="$(BR2_EXTERNAL_AD5X_PATH)/board/ad5x/busybox.fragment"
+# fw_printenv/fw_setenv (libubootenv): S99ad5x-booted confirms a start to our
+# U-Boot (u-boot/) in its environment (/etc/fw_env.config)
+BR2_PACKAGE_LIBUBOOTENV=y
 BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_MDEV=y
 # squashfs root: read-only
 # BR2_TARGET_GENERIC_REMOUNT_ROOTFS_RW is not set

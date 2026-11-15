@@ -3,6 +3,10 @@
 # if SSH is up (without it a broken system couldn't be fixed). Also marks
 # a start of our own kernel as successful (S00ad5x-kernel): "started"
 # becomes last-ok; pending and the count of unfinished starts go.
+# Started by our U-Boot (ad5x.uboot=1, u-boot/): clears its boot_pending, so
+# its next start boots the main OS again instead of the recovery OS; and
+# with ad5x.wdt=1 (U-Boot started the watchdog for the start-up) feeds the
+# watchdog from now on, so a hang still resets the board.
 # AD5X_LIB overrides /usr/lib/ad5x (tools/test_kernel_fallback.sh).
 
 # Files this creates are readable by klipper and www-data, whoever started
@@ -21,6 +25,18 @@ start)
 		if [ -f $D/started ] || [ -f $D/pending ] || [ -f $D/unfinished ]; then
 			[ -f $D/started ] && echo "$(cat $D/started) ok" > $D/last-ok
 			rm -f $D/started $D/pending $D/unfinished; sync
+		fi
+		if grep -qw ad5x.uboot=1 /proc/cmdline; then
+			if fw_setenv boot_pending; then
+				echo "booted: U-Boot's boot_pending cleared"
+			else
+				echo "booted: clearing U-Boot's boot_pending failed: recovery OS at the next start"
+			fi
+		fi
+		if grep -qw ad5x.wdt=1 /proc/cmdline && [ -c /dev/watchdog ] &&
+		   ! pidof watchdog >/dev/null; then
+			watchdog -T 60 -t 10 /dev/watchdog &&
+				echo "booted: watchdog fed (60 s)"
 		fi
 	else
 		echo "booted: dropbear not running, boot flag left on slot $OTHER"
