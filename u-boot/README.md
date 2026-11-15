@@ -20,8 +20,9 @@ output, upstream style) and builds `u-boot.bin` with Buildroot's toolchain.
 | Environment | eMMC user area, 0x8A400 and 0x92400 (two copies, 32 KiB each), where stock's U-Boot would keep it; reset to this build's defaults when it comes from another build, keeping `boot_pending` |
 | Boot flag | `ad5x_flag [a\|b]`: reads or sets the `ota` sector (LBA 0x6C800) the SPL boots by |
 | Fallback | Each start sets `boot_pending` and boots the main OS. If it's still set at the next start, or the kernel can't be loaded, U-Boot sets the flag to slot A and boots the recovery OS's kernel the way the SPL would. Linux would clear `boot_pending` (`fw_setenv`) once start-up completes; Kiln doesn't yet |
+| Watchdog | `reset` restarts the board through the watchdog (10 ms); `ad5x_wdt SECONDS\|off` starts it with a timeout of up to about 1431 s, or stops it. It counts the RTC clock (EXCLK / 512, about 46.9 kHz), whose gate Flashforge's 5.10 and the vendor 6.6 leave off |
 
-Not done: watchdog reset (`reset`), eMMC DMA and 8-bit bus, Ethernet, USB.
+Not done: arming the watchdog for the boot (with Linux feeding it), eMMC DMA and 8-bit bus, Ethernet, USB.
 
 ## SPL
 
@@ -49,7 +50,8 @@ trampoline's `LOAD_ADDR` changed to 0x80100000, after setting PE9/PE10
 - `mmc info` (SanDisk `DA2016`, 52 MHz High Speed mode at 50 MHz), `mmc part`, the `ota` and `kernel2` sectors;
 - a direct boot of 6.6 from `rootfs2` (5.6 MiB in about 0.3 s), up to the main OS with Klipper ready;
 - `saveenv`: a dump of the first MiB before and after differs only in 0x8A400-0x9274B, both copies with valid CRCs;
-- a start with `boot_pending` set: flag set to slot A, the stock kernel loaded from `kernel` (checksum checked) and the recovery OS up.
+- a start with `boot_pending` set: flag set to slot A, the stock kernel loaded from `kernel` (checksum checked) and the recovery OS up;
+- the watchdog (2026-11-15): after `ad5x_wdt 600` the counter runs at about 45 Hz and `ad5x_wdt off` stops it; `reset` restarts the board, which comes up through the SPL as after a power cycle.
 
 ## Plan
 
