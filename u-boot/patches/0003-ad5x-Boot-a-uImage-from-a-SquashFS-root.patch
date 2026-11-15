@@ -1,7 +1,7 @@
 From 7be8e4a476e3ceadfe4b4e172be152186477a21d Mon Sep 17 00:00:00 2001
 From: Hunter Laux <hunterlaux@gmail.com>
 Date: Sat, 14 Nov 2026 15:05:32 -0700
-Subject: [PATCH 3/5] ad5x: Boot a uImage from a SquashFS root
+Subject: [PATCH 03/10] ad5x: Boot a uImage from a SquashFS root
 
 Kiln's root filesystems are LZO SquashFS; with SquashFS, LZO and legacy
 uImage support, U-Boot loads the kernel straight from the slot's root

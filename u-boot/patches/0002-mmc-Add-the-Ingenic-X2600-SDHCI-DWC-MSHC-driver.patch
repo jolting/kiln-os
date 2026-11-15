@@ -1,7 +1,7 @@
 From e390cef8f8c85dfa9c609f08c404cd4e6b793153 Mon Sep 17 00:00:00 2001
 From: Hunter Laux <hunterlaux@gmail.com>
 Date: Sat, 14 Nov 2026 15:01:21 -0700
-Subject: [PATCH 2/5] mmc: Add the Ingenic X2600 SDHCI (DWC MSHC) driver
+Subject: [PATCH 02/10] mmc: Add the Ingenic X2600 SDHCI (DWC MSHC) driver
 
 The X2600's MSC controllers are Synopsys DWC MSHC cores whose card clock
 comes from the CGU: the SDCLK frequency select bits have no effect, so

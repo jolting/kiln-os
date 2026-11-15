@@ -23,6 +23,22 @@ output, upstream style) and builds `u-boot.bin` with Buildroot's toolchain.
 
 Not done: watchdog reset (`reset`), eMMC DMA and 8-bit bus, Ethernet, USB.
 
+## SPL
+
+An SPL for where the boot ROM starts Flashforge's (code at 0x80001800).
+It stops the watchdog the boot ROM leaves running, sets up UART0 (pins,
+115200), the clocks and the DDR3, reads the `ota` flag and boots the slot's
+uImage with the stock command line, as Flashforge's SPL does. The clock and
+DDR3 setup is ported from Ingenic's X2600 boot loader (github
+`k1-debian/u-boot`, U-Boot 2013.07 xburst2), which Flashforge's SPL is built
+from, with the values of the stock SPL: its PLL settings and its
+`X2600H-DDR3L` parameter set. It is skipped when the DDR is already running
+(chainload tests). About 22 KiB, the room the stock SPL has.
+
+Chainloaded from Linux (with the DDR running), it boots the stock kernel to
+the main OS. The clock and DDR3 setup, the boot ROM header and the boot
+ROM's memory budget are untested: they need a start from the boot ROM.
+
 ## Tested (2026-11-14, by chainload; no slot or first-MiB writes)
 
 From the stock 5.10 kernel with `kernel-ingenic66/chainload`, its

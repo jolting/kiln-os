@@ -1,7 +1,7 @@
 From 93608e95ac45ac792dd0abb86d424e765193a563 Mon Sep 17 00:00:00 2001
 From: Hunter Laux <hunterlaux@gmail.com>
 Date: Sat, 14 Nov 2026 15:10:05 -0700
-Subject: [PATCH 4/5] mmc: x2600_sdhci: Let the CGU divider settle after the
+Subject: [PATCH 04/10] mmc: x2600_sdhci: Let the CGU divider settle after the
  clock is on
 
 A new MSCnCDR divider only takes effect (its busy flag clears) once the

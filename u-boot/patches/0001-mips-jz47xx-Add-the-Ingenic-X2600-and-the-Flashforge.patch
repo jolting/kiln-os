@@ -1,7 +1,7 @@
 From ec59db986891bb2b15bf2317b4d01e3aca495a4e Mon Sep 17 00:00:00 2001
 From: Hunter Laux <hunterlaux@gmail.com>
 Date: Sat, 14 Nov 2026 14:14:16 -0700
-Subject: [PATCH 1/5] mips: jz47xx: Add the Ingenic X2600 and the Flashforge
+Subject: [PATCH 01/10] mips: jz47xx: Add the Ingenic X2600 and the Flashforge
  Adventurer 5X
 
 U-Boot proper only: the boot ROM's SPL (or Linux, for tests) has set up

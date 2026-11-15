@@ -1,7 +1,7 @@
 From 03c518d1127cec2044e6027335af83a4b9e16dae Mon Sep 17 00:00:00 2001
 From: Hunter Laux <hunterlaux@gmail.com>
 Date: Sat, 14 Nov 2026 15:28:25 -0700
-Subject: [PATCH 5/5] ad5x: Environment on the eMMC, boot flag command and
+Subject: [PATCH 05/10] ad5x: Environment on the eMMC, boot flag command and
  recovery fallback
 
 The environment is kept twice (0x8A400, 0x92400 of the eMMC's user area,
